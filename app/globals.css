@@ -1,19 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  --bg: #2D3A47;
-  --bg-card: #3d4f5e;
-  --bg-deep: #1e2a35;
-  --accent: #ECC4C3;
-  --accent2: #B97D7B;
-  --text: #DDD3C9;
-  --text-muted: #A9B7C6;
-  --haki: #928E5E;
-  --border: rgba(169, 183, 198, 0.15);
+@theme {
+  --color-bg: #2D3A47;
+  --color-card: #3d4f5e;
+  --color-deep: #1e2a35;
+  --color-accent: #ECC4C3;
+  --color-accent2: #B97D7B;
+  --color-text: #DDD3C9;
+  --color-muted: #A9B7C6;
+  --color-haki: #928E5E;
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
 }
 
 * {
@@ -23,8 +22,8 @@
 }
 
 body {
-  background-color: var(--bg);
-  color: var(--text);
+  background-color: #2D3A47;
+  color: #DDD3C9;
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -43,14 +42,4 @@ h1, h2, h3 {
 
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 8px);
-}
-
-.font-serif {
-  font-family: 'Playfair Display', serif;
-}
-
-.glass {
-  background: rgba(61, 79, 94, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
 }
