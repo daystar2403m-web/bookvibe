@@ -1,8 +1,10 @@
 "use client";
+
 export const dynamic = "force-dynamic";
+export const runtime = "edge";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -17,6 +19,12 @@ export default function AuthPage() {
   async function handleSubmit() {
     setLoading(true);
     setError("");
+
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
 
     if (mode === "register") {
       const { error } = await supabase.auth.signUp({
@@ -41,23 +49,19 @@ export default function AuthPage() {
         <p className="text-4xl">📬</p>
         <h2 className="text-white text-xl font-bold">Check your email</h2>
         <p className="text-white/50 text-sm">We sent a confirmation link to <strong>{email}</strong></p>
-        <button onClick={() => setMode("login")} className="text-indigo-400 text-sm mt-2">
-          Back to login
-        </button>
+        <button onClick={() => setMode("login")} className="text-indigo-400 text-sm mt-2">Back to login</button>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-[#0d0d12] flex flex-col justify-center px-6">
-      {/* Logo */}
       <div className="text-center mb-10">
         <p className="text-5xl mb-3">📚</p>
         <h1 className="text-white text-3xl font-bold tracking-tight">BookVibe</h1>
         <p className="text-white/40 text-sm mt-1">Read books. Share vibes.</p>
       </div>
 
-      {/* Tabs */}
       <div className="flex bg-white/5 rounded-xl p-1 mb-6">
         {(["login", "register"] as const).map((m) => (
           <button
@@ -99,9 +103,7 @@ export default function AuthPage() {
         />
 
         {error && (
-          <p className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3">
-            {error}
-          </p>
+          <p className="text-red-400 text-sm bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3">{error}</p>
         )}
 
         <button
@@ -112,10 +114,6 @@ export default function AuthPage() {
           {loading ? "Loading…" : mode === "login" ? "Sign In" : "Create Account"}
         </button>
       </div>
-
-      <p className="text-white/20 text-xs text-center mt-8">
-        By continuing you agree to our Terms & Privacy Policy
-      </p>
     </div>
   );
 }
