@@ -44,7 +44,10 @@ export default function PostCard({ post, currentUser, onLikeToggle }: Props) {
 
   return (
     <>
-      <div className="bg-[#0d0d12] border-b border-white/5">
+      <div
+        className="border-b"
+        style={{ borderColor: "rgba(169, 183, 198, 0.08)", background: "#2D3A47" }}
+      >
         {/* Header */}
         <div className="flex items-center gap-3 px-4 py-3">
           <Link href={`/profile/${post.profiles?.username}`}>
@@ -52,58 +55,56 @@ export default function PostCard({ post, currentUser, onLikeToggle }: Props) {
           </Link>
           <div className="flex-1">
             <Link href={`/profile/${post.profiles?.username}`}>
-              <p className="text-white text-sm font-semibold">@{post.profiles?.username}</p>
+              <p className="text-sm font-semibold" style={{ color: "#DDD3C9" }}>
+                @{post.profiles?.username}
+              </p>
             </Link>
-            <p className="text-white/30 text-[10px]">
+            <p className="text-[10px]" style={{ color: "#A9B7C6" }}>
               {new Date(post.created_at).toLocaleDateString("tr-TR")}
             </p>
           </div>
-          <button className="text-white/40">···</button>
+          <button style={{ color: "#A9B7C6" }}>···</button>
         </div>
 
         {/* Media */}
-        <div className="relative w-full aspect-square bg-zinc-900">
+        <div className="relative w-full aspect-square" style={{ background: "#1e2a35" }}>
           {post.type === "image" ? (
             <img src={post.url} alt={post.caption ?? ""} className="w-full h-full object-cover" />
           ) : (
-            <video
-              src={post.url}
-              className="w-full h-full object-cover"
-              controls
-              playsInline
-              muted
-            />
+            <video src={post.url} className="w-full h-full object-cover" controls playsInline muted />
           )}
         </div>
 
         {/* Actions */}
-        <div className="px-4 pt-3 pb-1">
+        <div className="px-4 pt-3 pb-3">
           <div className="flex items-center gap-5 mb-2">
             <button onClick={toggleLike} className="transition-transform active:scale-90">
-              <span className={`text-2xl ${liked ? "" : "grayscale opacity-60"}`}>❤️</span>
+              <span className={`text-2xl ${liked ? "" : "grayscale opacity-50"}`}>❤️</span>
             </button>
             <button onClick={() => setShowComments(true)}>
-              <span className="text-2xl opacity-60">💬</span>
+              <span className="text-2xl opacity-50">💬</span>
             </button>
-            <button>
-              <span className="text-2xl opacity-60">↗️</span>
-            </button>
+            <button><span className="text-2xl opacity-50">↗️</span></button>
             <div className="flex-1" />
-            <button>
-              <span className="text-2xl opacity-60">🔖</span>
-            </button>
+            <button><span className="text-2xl opacity-50">🔖</span></button>
           </div>
-          <p className="text-white text-sm font-semibold">{likesCount.toLocaleString()} likes</p>
+
+          <p className="text-sm font-semibold" style={{ color: "#DDD3C9" }}>
+            {likesCount.toLocaleString()} likes
+          </p>
+
           {post.caption && (
-            <p className="text-white text-sm mt-0.5">
+            <p className="text-sm mt-0.5" style={{ color: "#DDD3C9" }}>
               <span className="font-semibold mr-1">@{post.profiles?.username}</span>
-              {post.caption}
+              <span style={{ color: "#A9B7C6" }}>{post.caption}</span>
             </p>
           )}
+
           {post.comments_count > 0 && (
             <button
               onClick={() => setShowComments(true)}
-              className="text-white/40 text-xs mt-1"
+              className="text-xs mt-1"
+              style={{ color: "#928E5E" }}
             >
               View all {post.comments_count} comments
             </button>
@@ -112,11 +113,7 @@ export default function PostCard({ post, currentUser, onLikeToggle }: Props) {
       </div>
 
       {showComments && (
-        <CommentSheet
-          postId={post.id}
-          currentUser={currentUser}
-          onClose={() => setShowComments(false)}
-        />
+        <CommentSheet postId={post.id} currentUser={currentUser} onClose={() => setShowComments(false)} />
       )}
     </>
   );

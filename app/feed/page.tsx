@@ -1,4 +1,5 @@
 "use client";
+
 export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
@@ -14,19 +15,14 @@ export default function FeedPage() {
   const [currentUser, setCurrentUser] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    init();
-  }, []);
+  useEffect(() => { init(); }, []);
 
   async function init() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { router.push("/auth"); return; }
 
     const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
+      .from("profiles").select("*").eq("id", user.id).single();
     setCurrentUser(profile);
 
     const { data: postsData } = await supabase
@@ -37,10 +33,7 @@ export default function FeedPage() {
 
     if (postsData && profile) {
       const { data: myLikes } = await supabase
-        .from("likes")
-        .select("post_id")
-        .eq("user_id", profile.id);
-
+        .from("likes").select("post_id").eq("user_id", profile.id);
       const likedIds = new Set(myLikes?.map((l) => l.post_id));
       setPosts(postsData.map((p) => ({ ...p, liked_by_me: likedIds.has(p.id) })));
     }
@@ -49,37 +42,53 @@ export default function FeedPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0d0d12] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "#1e2a35" }}>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 rounded-full border-2 border-accent border-t-transparent animate-spin"
+            style={{ borderColor: "#ECC4C3", borderTopColor: "transparent" }} />
+          <p className="font-serif text-muted italic text-sm">Opening the pages…</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0d0d12] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: "#2D3A47" }}>
       {/* Header */}
-      <div className="sticky top-0 z-20 bg-[#0d0d12]/95 backdrop-blur border-b border-white/5 flex items-center justify-between px-4 py-3">
-        <span className="text-white font-bold text-lg">BookVibe</span>
+      <div
+        className="sticky top-0 z-20 flex items-center justify-between px-4 py-3"
+        style={{
+          background: "rgba(30, 42, 53, 0.95)",
+          backdropFilter: "blur(20px)",
+          borderBottom: "1px solid rgba(169, 183, 198, 0.1)",
+        }}
+      >
+        <h1 className="font-serif text-xl" style={{ color: "#ECC4C3" }}>BookVibe</h1>
         <div className="flex gap-1 text-sm font-medium">
-          <button className="px-3 py-1 rounded-full text-white/40">Following</button>
-          <button className="px-3 py-1 rounded-full bg-white/10 text-white">For You</button>
+          <button className="px-3 py-1 rounded-full text-muted/50 text-xs">Following</button>
+          <button
+            className="px-3 py-1 rounded-full text-xs font-semibold"
+            style={{ background: "rgba(236, 196, 195, 0.15)", color: "#ECC4C3" }}
+          >
+            For You
+          </button>
         </div>
-        <button onClick={() => router.push("/search")} className="text-white/60">
+        <button onClick={() => router.push("/search")} style={{ color: "#A9B7C6" }}>
           🔍
         </button>
       </div>
 
-      {/* Posts */}
       {posts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center h-96 gap-3 text-center px-8">
-          <p className="text-4xl">📭</p>
-          <p className="text-white font-semibold">No posts yet</p>
-          <p className="text-white/40 text-sm">Be the first to share something!</p>
+        <div className="flex flex-col items-center justify-center h-96 gap-4 text-center px-8">
+          <span className="text-5xl">📭</span>
+          <h3 className="font-serif text-xl text-text">No stories yet</h3>
+          <p className="text-muted text-sm">Be the first to share something beautiful</p>
           <button
             onClick={() => router.push("/create")}
-            className="mt-2 bg-indigo-600 text-white px-6 py-2 rounded-full text-sm font-semibold"
+            className="mt-2 px-6 py-2.5 rounded-full text-sm font-semibold text-deep"
+            style={{ background: "linear-gradient(135deg, #ECC4C3, #B97D7B)" }}
           >
-            Create Post
+            Share Something
           </button>
         </div>
       ) : (
