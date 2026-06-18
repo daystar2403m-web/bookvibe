@@ -7,9 +7,7 @@ import { MOCK_BOOKS } from "@/lib/mockBooks";
 import { Search, User, Star, ChevronRight } from "lucide-react";
 
 export default function Home() {
-  const [continueBooks, setContinueBooks] = useState
-    { bookId: string; chapter: number }[]
-  >([]);
+const [continueBooks, setContinueBooks] = useState<{ bookId: string; chapter: number }[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
