@@ -5,330 +5,273 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MOCK_BOOKS } from "@/lib/mockBooks";
 
-const CATEGORIES = [
-  "Trendler", "Romantik", "Fantastik", "Bilim Kurgu",
-  "Genç Yetişkin", "Polisiye", "Düşmandan Aşka", "Mafya", "Anlaşmalı Evlilik",
-];
-
 export default function Home() {
-  const [continueData, setContinueData] = useState<{ bookId: string; chapter: number } | null>(null);
-  const [activeCategory, setActiveCategory] = useState("Trendler");
-  const [lang, setLang] = useState<"tr" | "en">("tr");
+  const [continueBooks, setContinueBooks] = useState<{ bookId: string; chapter: number }[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    let last: { bookId: string; chapter: number } | null = null;
+    const list: { bookId: string; chapter: number }[] = [];
     for (const book of MOCK_BOOKS) {
       const saved = localStorage.getItem(`progress-${book.id}`);
       if (saved !== null) {
-        const chapter = Number(saved);
-        if (!last || chapter >= last.chapter) last = { bookId: book.id, chapter };
+        list.push({ bookId: book.id, chapter: Number(saved) });
       }
     }
-    setContinueData(last);
+    setContinueBooks(list);
   }, []);
 
-  const continueBook = MOCK_BOOKS.find((b) => b.id === continueData?.bookId);
-
-  const t = {
-    tr: {
-      continueReading: "Okumaya Devam Et",
-      forYou: "Sana Özel",
-      recommended: "Önerilen Kitaplar",
-      trending: "Trend Kitaplar",
-      noProgress: "Henüz okuma geçmişin yok",
-      seeAll: "Tümünü Gör",
-      chapter: "Bölüm",
-    },
-    en: {
-      continueReading: "Continue Reading",
-      forYou: "For You",
-      recommended: "Recommended",
-      trending: "Trending",
-      noProgress: "No reading progress yet",
-      seeAll: "See All",
-      chapter: "Chapter",
-    },
-  }[lang];
+  const featuredBook = MOCK_BOOKS[0];
 
   return (
-    <div
-      className="min-h-screen pb-28"
-      style={{ background: "linear-gradient(170deg, #1e2a35 0%, #2D3A47 50%, #1e2a35 100%)" }}
-    >
-      {/* Glow */}
-      <div
-        className="fixed top-0 left-0 right-0 h-96 pointer-events-none z-0"
-        style={{ background: "radial-gradient(ellipse at top, rgba(236,196,195,0.06), transparent)" }}
-      />
-
+    <div className="min-h-screen pb-28" style={{ background: "#f8f9fa" }}>
       {/* TOP BAR */}
-      <div
-        className="sticky top-0 z-30 flex items-center justify-between px-4 py-3"
-        style={{
-          background: "rgba(30,42,53,0.92)",
-          backdropFilter: "blur(20px)",
-          borderBottom: "1px solid rgba(169,183,198,0.08)",
-        }}
-      >
-        <h1
-          style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 22,
-            fontWeight: 700,
-            color: "#ECC4C3",
-            letterSpacing: "-0.3px",
-          }}
+      <div className="flex items-center gap-3 px-4 pt-6 pb-4">
+        {/* Logo */}
+        <div
+          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+          style={{ background: "#feb0c1" }}
         >
-          BookVibe
-        </h1>
-
-        <div className="flex items-center gap-2">
-          {/* Lang toggle */}
-          <button
-            onClick={() => setLang(lang === "tr" ? "en" : "tr")}
-            className="text-xs px-2.5 py-1 rounded-full font-medium transition-all"
-            style={{
-              background: "rgba(146,142,94,0.2)",
-              color: "#928E5E",
-              border: "1px solid rgba(146,142,94,0.3)",
-            }}
-          >
-            {lang === "tr" ? "EN" : "TR"}
-          </button>
-
-          <div
-            className="w-9 h-9 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(236,196,195,0.12)", border: "1px solid rgba(236,196,195,0.2)" }}
-          >
-            <span style={{ fontSize: 15 }}>👤</span>
-          </div>
+          <span style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>B</span>
         </div>
+
+        {/* Search bar */}
+        <div
+          className="flex-1 flex items-center gap-2 rounded-2xl px-4 py-2.5"
+          style={{ background: "#e7ebee" }}
+        >
+          <span style={{ color: "#adb5bd", fontSize: 16 }}>🔍</span>
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Kitap, yazar veya etiket ara"
+            className="flex-1 bg-transparent text-sm focus:outline-none"
+            style={{ color: "#1a1a2e", fontFamily: "Montserrat" }}
+          />
+        </div>
+
+        {/* Profile */}
+        <Link href="/profile">
+          <div
+            className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+            style={{ background: "#feb0c1" }}
+          >
+            <span style={{ fontSize: 16 }}>👤</span>
+          </div>
+        </Link>
       </div>
 
-      <div className="relative z-10">
-        {/* CATEGORIES */}
-        <div className="flex gap-2 overflow-x-auto px-4 pt-4 pb-3 scrollbar-hide">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className="whitespace-nowrap rounded-xl px-4 py-2 text-xs font-medium transition-all"
-              style={
-                activeCategory === cat
-                  ? {
-                      background: "linear-gradient(135deg, #ECC4C3, #B97D7B)",
-                      color: "#1e2a35",
-                      fontWeight: 600,
-                      boxShadow: "0 4px 15px rgba(236,196,195,0.3)",
-                    }
-                  : {
-                      background: "rgba(61,79,94,0.5)",
-                      color: "#A9B7C6",
-                      border: "1px solid rgba(169,183,198,0.1)",
-                    }
+      {/* FEATURED BANNER */}
+      <div className="px-4 mb-6">
+        <FeaturedBanner book={featuredBook} />
+      </div>
+
+      {/* CONTINUE READING */}
+      <Section title="Kaldığın Yerden Devam Et" showArrow>
+        <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide">
+          {(continueBooks.length > 0
+            ? continueBooks.map((c) => MOCK_BOOKS.find((b) => b.id === c.bookId)!).filter(Boolean)
+            : MOCK_BOOKS
+          ).map((book, i) => (
+            <ContinueCard
+              key={book.id + i}
+              book={book}
+              chapterLabel={
+                continueBooks[i]
+                  ? `${continueBooks[i].chapter + 1}. Bölüm`
+                  : "6. Bölüm"
               }
-            >
-              {cat}
-            </button>
+              badge={i % 2 === 0 ? "Devam Et" : "2 yeni bölüm"}
+            />
           ))}
         </div>
+      </Section>
 
-        {/* CONTINUE READING */}
-        <div className="px-4 mt-2">
-          <SectionTitle title={t.continueReading} />
-
-          {continueData && continueBook ? (
-            <Link href={`/book/${continueBook.id}?mode=read&chapter=${continueData.chapter}`}>
-              <div
-                className="flex gap-4 p-4 rounded-2xl items-center transition-all active:scale-98"
-                style={{
-                  background: "rgba(61,79,94,0.45)",
-                  border: "1px solid rgba(169,183,198,0.1)",
-                  boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-                }}
-              >
-                <img
-                  src={continueBook.coverUrl}
-                  className="w-16 h-22 object-cover shadow-lg"
-                  style={{ borderRadius: 12, height: 88 }}
-                />
-                <div className="flex-1 min-w-0">
-                  <p
-                    className="font-semibold text-sm truncate"
-                    style={{ color: "#DDD3C9", fontFamily: "'Playfair Display', serif" }}
-                  >
-                    {continueBook.title}
-                  </p>
-                  <p className="text-xs mt-0.5 truncate" style={{ color: "#A9B7C6" }}>
-                    {continueBook.chapters?.[continueData.chapter]?.title}
-                  </p>
-                  {/* Progress bar */}
-                  <div
-                    className="mt-2 h-1 rounded-full overflow-hidden"
-                    style={{ background: "rgba(169,183,198,0.15)" }}
-                  >
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${Math.round((continueData.chapter / Math.max(continueBook.chapters?.length - 1, 1)) * 100)}%`,
-                        background: "linear-gradient(90deg, #ECC4C3, #B97D7B)",
-                      }}
-                    />
-                  </div>
-                </div>
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ background: "rgba(236,196,195,0.15)" }}
-                >
-                  <span style={{ color: "#ECC4C3", fontSize: 14 }}>›</span>
-                </div>
-              </div>
-            </Link>
-          ) : (
-            <div
-              className="flex items-center gap-3 p-4 rounded-2xl"
-              style={{
-                background: "rgba(61,79,94,0.25)",
-                border: "1px dashed rgba(169,183,198,0.15)",
-              }}
-            >
-              <span className="text-xl">📖</span>
-              <p className="text-sm" style={{ color: "#A9B7C6" }}>{t.noProgress}</p>
-            </div>
-          )}
-        </div>
-
-        {/* FOR YOU — horizontal scroll */}
-        <div className="mt-6">
-          <div className="flex items-center justify-between px-4 mb-3">
-            <SectionTitle title={t.forYou} />
-            <SmallLink label={t.seeAll} />
-          </div>
-          <div className="flex gap-3 overflow-x-auto px-4 pb-3 scrollbar-hide">
-            {MOCK_BOOKS.map((book) => (
-              <BookCard key={book.id} book={book} size="md" />
+      {/* FAVORITE AUTHORS */}
+      <Section title="Sevdiğin Yazarlardan">
+        <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide">
+          {/* Big featured card */}
+          <BookCard book={MOCK_BOOKS[0]} width={120} height={170} />
+          {/* Grid of small cards */}
+          <div className="grid grid-cols-2 gap-2" style={{ width: 170 }}>
+            {[...MOCK_BOOKS, ...MOCK_BOOKS].slice(0, 4).map((book, i) => (
+              <BookCard key={book.id + i} book={book} width={80} height={80} compact />
             ))}
           </div>
         </div>
+      </Section>
 
-        {/* TRENDING — horizontal scroll */}
-        <div className="mt-4">
-          <div className="flex items-center justify-between px-4 mb-3">
-            <SectionTitle title={t.trending} />
-            <SmallLink label={t.seeAll} />
-          </div>
-          <div className="flex gap-3 overflow-x-auto px-4 pb-3 scrollbar-hide">
-            {[...MOCK_BOOKS].reverse().map((book) => (
-              <BookCard key={book.id} book={book} size="md" />
-            ))}
-          </div>
+      {/* FOR YOU */}
+      <Section title="Senin için ✨">
+        <div className="grid grid-cols-2 gap-3 px-4">
+          {MOCK_BOOKS.map((book) => (
+            <RecommendCard key={book.id} book={book} />
+          ))}
         </div>
-
-        {/* RECOMMENDED — 2 column grid */}
-        <div className="mt-4 px-4">
-          <div className="flex items-center justify-between mb-3">
-            <SectionTitle title={t.recommended} />
-            <SmallLink label={t.seeAll} />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {MOCK_BOOKS.map((book) => (
-              <Link key={book.id} href={`/book/${book.id}`}>
-                <div
-                  className="p-3 rounded-2xl transition-all active:scale-95"
-                  style={{
-                    background: "rgba(61,79,94,0.4)",
-                    border: "1px solid rgba(169,183,198,0.08)",
-                  }}
-                >
-                  <div className="relative mb-2">
-                    <img
-                      src={book.coverUrl}
-                      className="w-full object-cover"
-                      style={{ height: 160, borderRadius: 10 }}
-                    />
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        borderRadius: 10,
-                        background: "linear-gradient(to top, rgba(30,42,53,0.7) 0%, transparent 50%)",
-                      }}
-                    />
-                  </div>
-                  <p
-                    className="text-xs font-semibold leading-snug line-clamp-2"
-                    style={{ color: "#DDD3C9", fontFamily: "'Playfair Display', serif" }}
-                  >
-                    {book.title}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: "#928E5E" }}>{book.author}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
+      </Section>
 
       <BottomNav />
     </div>
   );
 }
 
-function SectionTitle({ title }: { title: string }) {
+/* ---------- Components ---------- */
+
+function Section({
+  title,
+  showArrow,
+  children,
+}: {
+  title: string;
+  showArrow?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <h2
-      className="text-base font-semibold"
-      style={{
-        fontFamily: "'Playfair Display', serif",
-        color: "#DDD3C9",
-      }}
-    >
-      {title}
-    </h2>
+    <div className="mb-6">
+      <div className="flex items-center gap-1 px-4 mb-3">
+        <h2 style={{ fontFamily: "Montserrat", fontWeight: 700, fontSize: 16, color: "#1a1a2e" }}>
+          {title}
+        </h2>
+        {showArrow && <span style={{ color: "#1a1a2e" }}>›</span>}
+      </div>
+      {children}
+    </div>
   );
 }
 
-function SmallLink({ label }: { label: string }) {
-  return (
-    <button className="text-xs font-medium" style={{ color: "#928E5E" }}>
-      {label} →
-    </button>
-  );
-}
-
-function BookCard({ book, size = "md" }: { book: any; size?: "sm" | "md" | "lg" }) {
-  const w = size === "lg" ? 150 : size === "md" ? 120 : 90;
-  const h = size === "lg" ? 210 : size === "md" ? 170 : 130;
-
+function FeaturedBanner({ book }: { book: any }) {
+  const tags = ["Fantastik", "Romantik", "Macera"];
   return (
     <Link href={`/book/${book.id}`}>
-      <div style={{ width: w }} className="flex-shrink-0">
-        <div className="relative" style={{ borderRadius: 12, overflow: "hidden" }}>
+      <div
+        className="relative rounded-3xl overflow-hidden p-4 flex gap-4"
+        style={{
+          background: "linear-gradient(135deg, #ff7a59 0%, #ff4d6d 50%, #c9184a 100%)",
+          minHeight: 200,
+        }}
+      >
+        {/* Badge */}
+        <div
+          className="absolute top-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-full"
+          style={{ background: "rgba(255,255,255,0.95)" }}
+        >
+          <span style={{ fontSize: 11 }}>⭐</span>
+          <span style={{ fontSize: 10, fontWeight: 700, color: "#c9184a" }}>GÜNÜN ÖNERİSİ</span>
+        </div>
+
+        {/* Cover */}
+        <div className="flex-shrink-0 mt-6">
           <img
             src={book.coverUrl}
-            className="object-cover"
-            style={{ width: w, height: h }}
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(to top, rgba(30,42,53,0.65) 0%, transparent 55%)",
-            }}
+            className="object-cover rounded-xl shadow-lg"
+            style={{ width: 90, height: 130, border: "3px solid rgba(255,255,255,0.3)" }}
           />
         </div>
+
+        {/* Info */}
+        <div className="flex-1 flex flex-col justify-center mt-4 min-w-0">
+          <h3
+            style={{
+              fontFamily: "Montserrat",
+              fontWeight: 800,
+              fontSize: 19,
+              color: "#fff",
+              lineHeight: 1.2,
+            }}
+          >
+            {book.title}
+          </h3>
+          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", marginTop: 4, fontWeight: 600 }}>
+            {book.author}
+          </p>
+          <p
+            style={{
+              fontSize: 12,
+              color: "rgba(255,255,255,0.9)",
+              marginTop: 8,
+              fontStyle: "italic",
+              lineHeight: 1.4,
+            }}
+          >
+            "İnsan bir kutu kibrite benzer. Varolur, yanar ve söner."
+          </p>
+          <div className="flex gap-1.5 mt-3 flex-wrap">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="text-[10px] font-semibold px-2.5 py-1 rounded-full"
+                style={{ background: "rgba(255,255,255,0.25)", color: "#fff" }}
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function ContinueCard({ book, chapterLabel, badge }: { book: any; chapterLabel: string; badge: string }) {
+  return (
+    <Link href={`/book/${book.id}`}>
+      <div className="flex-shrink-0" style={{ width: 100 }}>
+        <div className="relative rounded-xl overflow-hidden shadow-sm" style={{ height: 140 }}>
+          <img src={book.coverUrl} className="w-full h-full object-cover" />
+        </div>
         <p
-          className="text-xs font-medium mt-1.5 leading-snug"
-          style={{
-            color: "#DDD3C9",
-            maxWidth: w,
-            overflow: "hidden",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-          }}
+          className="text-[11px] font-semibold mt-1.5"
+          style={{ color: badge === "Devam Et" ? "#1a1a2e" : "#c9184a" }}
+        >
+          {badge}
+        </p>
+        <p className="text-[10px] mt-0.5" style={{ color: "#6c757d" }}>{chapterLabel}</p>
+      </div>
+    </Link>
+  );
+}
+
+function BookCard({
+  book,
+  width,
+  height,
+  compact,
+}: {
+  book: any;
+  width: number;
+  height: number;
+  compact?: boolean;
+}) {
+  return (
+    <Link href={`/book/${book.id}`}>
+      <div
+        className="rounded-xl overflow-hidden shadow-sm flex-shrink-0"
+        style={{ width, height }}
+      >
+        <img src={book.coverUrl} className="w-full h-full object-cover" />
+      </div>
+    </Link>
+  );
+}
+
+function RecommendCard({ book }: { book: any }) {
+  return (
+    <Link href={`/book/${book.id}`}>
+      <div
+        className="rounded-2xl overflow-hidden p-2.5"
+        style={{ background: "#ffffff", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}
+      >
+        <img
+          src={book.coverUrl}
+          className="w-full object-cover rounded-xl mb-2"
+          style={{ height: 150 }}
+        />
+        <p
+          className="text-xs font-bold line-clamp-2"
+          style={{ color: "#1a1a2e", fontFamily: "Montserrat" }}
         >
           {book.title}
         </p>
-        <p className="text-[10px] mt-0.5" style={{ color: "#928E5E" }}>{book.author}</p>
+        <p className="text-[11px] mt-0.5" style={{ color: "#6c757d" }}>{book.author}</p>
       </div>
     </Link>
   );

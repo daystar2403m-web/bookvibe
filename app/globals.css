@@ -1,18 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #2D3A47;
-  --color-card: #3d4f5e;
-  --color-deep: #1e2a35;
-  --color-accent: #ECC4C3;
-  --color-accent2: #B97D7B;
-  --color-text: #DDD3C9;
-  --color-muted: #A9B7C6;
-  --color-haki: #928E5E;
-  --font-serif: "Playfair Display", serif;
-  --font-sans: "Inter", sans-serif;
+  --color-bg: #f8f9fa;
+  --color-search-bg: #e7ebee;
+  --color-search-icon: #adb5bd;
+  --color-pink: #feb0c1;
+  --color-text-dark: #1a1a2e;
+  --color-text-muted: #6c757d;
+  --font-sans: "Montserrat", sans-serif;
 }
 
 * {
@@ -22,14 +19,10 @@
 }
 
 body {
-  background-color: #2D3A47;
-  color: #DDD3C9;
-  font-family: 'Inter', sans-serif;
+  background-color: #f8f9fa;
+  color: #1a1a2e;
+  font-family: 'Montserrat', sans-serif;
   -webkit-font-smoothing: antialiased;
-}
-
-h1, h2, h3 {
-  font-family: 'Playfair Display', serif;
 }
 
 .scrollbar-hide {
@@ -42,4 +35,11 @@ h1, h2, h3 {
 
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom, 8px);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
