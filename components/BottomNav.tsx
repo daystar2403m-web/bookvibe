@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass, PenLine, Bell, Library } from "lucide-react";
+import { HomeIcon, CompassIcon, PenLineIcon, BellIcon, LibraryIcon } from "./BottomNavIcons";
 
 export default function BottomNav() {
   const pathname = usePathname();
 
   const items = [
-    { href: "/", Icon: Home },
-    { href: "/feed", Icon: Compass },
-    { href: "/create", Icon: PenLine },
-    { href: "/notifications", Icon: Bell },
-    { href: "/book/b1", Icon: Library },
+    { href: "/", Icon: HomeIcon },
+    { href: "/feed", Icon: CompassIcon },
+    { href: "/create", Icon: PenLineIcon },
+    { href: "/notifications", Icon: BellIcon },
+    { href: "/book/b1", Icon: LibraryIcon },
   ];
 
   return (
