@@ -2,39 +2,33 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Home, Compass, PenLine, Bell, Library } from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
 
   const items = [
-    { href: "/", icon: "🏠", label: "Ana Sayfa" },
-    { href: "/feed", icon: "🧭", label: "Keşfet" },
-    { href: "/create", icon: "✏️", label: "Yaz" },
-    { href: "/notifications", icon: "🔔", label: "Bildirim" },
-    { href: "/book/b1", icon: "📚", label: "Kitaplık" },
+    { href: "/", Icon: Home },
+    { href: "/feed", Icon: Compass },
+    { href: "/create", Icon: PenLine },
+    { href: "/notifications", Icon: Bell },
+    { href: "/book/b1", Icon: Library },
   ];
 
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-around px-3 py-3 max-w-md mx-auto"
-      style={{
-        background: "#ffffff",
-        borderTop: "1px solid #e7ebee",
-      }}
+      style={{ background: "#ffffff", borderTop: "1px solid #e7ebee" }}
     >
-      {items.map((item) => {
-        const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+      {items.map(({ href, Icon }) => {
+        const isActive = href === "/" ? pathname === "/" : pathname.startsWith(href);
         return (
-          <Link key={item.href} href={item.href}>
+          <Link key={href} href={href}>
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
-              style={
-                isActive
-                  ? { background: "#feb0c1", boxShadow: "0 4px 12px rgba(254,176,193,0.4)" }
-                  : { background: "transparent" }
-              }
+              className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+              style={isActive ? { background: "#feb0c1" } : { background: "transparent" }}
             >
-              <span style={{ fontSize: 20 }}>{item.icon}</span>
+              <Icon size={20} color="#1a1a2e" strokeWidth={1.8} />
             </div>
           </Link>
         );

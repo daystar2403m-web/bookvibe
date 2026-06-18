@@ -4,6 +4,7 @@ import BottomNav from "@/components/BottomNav";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MOCK_BOOKS } from "@/lib/mockBooks";
+import { Search, User, Star, ChevronRight } from "lucide-react";
 
 export default function Home() {
   const [continueBooks, setContinueBooks] = useState<{ bookId: string; chapter: number }[]>([]);
@@ -13,9 +14,7 @@ export default function Home() {
     const list: { bookId: string; chapter: number }[] = [];
     for (const book of MOCK_BOOKS) {
       const saved = localStorage.getItem(`progress-${book.id}`);
-      if (saved !== null) {
-        list.push({ bookId: book.id, chapter: Number(saved) });
-      }
+      if (saved !== null) list.push({ bookId: book.id, chapter: Number(saved) });
     }
     setContinueBooks(list);
   }, []);
@@ -23,39 +22,27 @@ export default function Home() {
   const featuredBook = MOCK_BOOKS[0];
 
   return (
-    <div className="min-h-screen pb-28" style={{ background: "#f8f9fa" }}>
+    <div className="min-h-screen pb-28" style={{ background: "#f8f9fa", fontFamily: "Montserrat, sans-serif" }}>
       {/* TOP BAR */}
       <div className="flex items-center gap-3 px-4 pt-6 pb-4">
-        {/* Logo */}
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "#feb0c1" }}
-        >
-          <span style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>B</span>
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "#feb0c1" }}>
+          <span style={{ fontSize: 18, fontWeight: 700, color: "#fff", fontFamily: "Montserrat" }}>B</span>
         </div>
 
-        {/* Search bar */}
-        <div
-          className="flex-1 flex items-center gap-2 rounded-2xl px-4 py-2.5"
-          style={{ background: "#e7ebee" }}
-        >
-          <span style={{ color: "#adb5bd", fontSize: 16 }}>🔍</span>
+        <div className="flex-1 flex items-center gap-2 rounded-2xl px-4 py-2.5" style={{ background: "#e7ebee" }}>
+          <Search size={16} color="#adb5bd" strokeWidth={2} />
           <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Kitap, yazar veya etiket ara"
             className="flex-1 bg-transparent text-sm focus:outline-none"
-            style={{ color: "#1a1a2e", fontFamily: "Montserrat" }}
+            style={{ color: "#1a1a2e", fontFamily: "Montserrat", fontWeight: 400 }}
           />
         </div>
 
-        {/* Profile */}
         <Link href="/profile">
-          <div
-            className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ background: "#feb0c1" }}
-          >
-            <span style={{ fontSize: 16 }}>👤</span>
+          <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "#feb0c1" }}>
+            <User size={16} color="#fff" strokeWidth={2} />
           </div>
         </Link>
       </div>
@@ -75,11 +62,7 @@ export default function Home() {
             <ContinueCard
               key={book.id + i}
               book={book}
-              chapterLabel={
-                continueBooks[i]
-                  ? `${continueBooks[i].chapter + 1}. Bölüm`
-                  : "6. Bölüm"
-              }
+              chapterLabel={continueBooks[i] ? `${continueBooks[i].chapter + 1}. Bölüm` : "6. Bölüm"}
               badge={i % 2 === 0 ? "Devam Et" : "2 yeni bölüm"}
             />
           ))}
@@ -89,19 +72,17 @@ export default function Home() {
       {/* FAVORITE AUTHORS */}
       <Section title="Sevdiğin Yazarlardan">
         <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide">
-          {/* Big featured card */}
           <BookCard book={MOCK_BOOKS[0]} width={120} height={170} />
-          {/* Grid of small cards */}
           <div className="grid grid-cols-2 gap-2" style={{ width: 170 }}>
             {[...MOCK_BOOKS, ...MOCK_BOOKS].slice(0, 4).map((book, i) => (
-              <BookCard key={book.id + i} book={book} width={80} height={80} compact />
+              <BookCard key={book.id + i} book={book} width={80} height={80} />
             ))}
           </div>
         </div>
       </Section>
 
       {/* FOR YOU */}
-      <Section title="Senin için ✨">
+      <Section title="Senin için">
         <div className="grid grid-cols-2 gap-3 px-4">
           {MOCK_BOOKS.map((book) => (
             <RecommendCard key={book.id} book={book} />
@@ -114,24 +95,12 @@ export default function Home() {
   );
 }
 
-/* ---------- Components ---------- */
-
-function Section({
-  title,
-  showArrow,
-  children,
-}: {
-  title: string;
-  showArrow?: boolean;
-  children: React.ReactNode;
-}) {
+function Section({ title, showArrow, children }: { title: string; showArrow?: boolean; children: React.ReactNode }) {
   return (
     <div className="mb-6">
       <div className="flex items-center gap-1 px-4 mb-3">
-        <h2 style={{ fontFamily: "Montserrat", fontWeight: 700, fontSize: 16, color: "#1a1a2e" }}>
-          {title}
-        </h2>
-        {showArrow && <span style={{ color: "#1a1a2e" }}>›</span>}
+        <h2 style={{ fontFamily: "Montserrat", fontWeight: 700, fontSize: 16, color: "#1a1a2e" }}>{title}</h2>
+        {showArrow && <ChevronRight size={16} color="#1a1a2e" />}
       </div>
       {children}
     </div>
@@ -149,16 +118,16 @@ function FeaturedBanner({ book }: { book: any }) {
           minHeight: 200,
         }}
       >
-        {/* Badge */}
         <div
-          className="absolute top-3 left-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-full"
+          className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full"
           style={{ background: "rgba(255,255,255,0.95)" }}
         >
-          <span style={{ fontSize: 11 }}>⭐</span>
-          <span style={{ fontSize: 10, fontWeight: 700, color: "#c9184a" }}>GÜNÜN ÖNERİSİ</span>
+          <Star size={11} color="#fff" fill="#fff" />
+          <span style={{ fontSize: 10, fontWeight: 700, color: "#c9184a", fontFamily: "Montserrat" }}>
+            GÜNÜN ÖNERİSİ
+          </span>
         </div>
 
-        {/* Cover */}
         <div className="flex-shrink-0 mt-6">
           <img
             src={book.coverUrl}
@@ -167,25 +136,18 @@ function FeaturedBanner({ book }: { book: any }) {
           />
         </div>
 
-        {/* Info */}
         <div className="flex-1 flex flex-col justify-center mt-4 min-w-0">
-          <h3
-            style={{
-              fontFamily: "Montserrat",
-              fontWeight: 800,
-              fontSize: 19,
-              color: "#fff",
-              lineHeight: 1.2,
-            }}
-          >
+          <h3 style={{ fontFamily: "Montserrat", fontWeight: 700, fontSize: 19, color: "#fff", lineHeight: 1.2 }}>
             {book.title}
           </h3>
-          <p style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", marginTop: 4, fontWeight: 600 }}>
+          <p style={{ fontFamily: "Montserrat", fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.85)", marginTop: 4 }}>
             {book.author}
           </p>
           <p
             style={{
+              fontFamily: "Montserrat",
               fontSize: 12,
+              fontWeight: 400,
               color: "rgba(255,255,255,0.9)",
               marginTop: 8,
               fontStyle: "italic",
@@ -199,7 +161,7 @@ function FeaturedBanner({ book }: { book: any }) {
               <span
                 key={tag}
                 className="text-[10px] font-semibold px-2.5 py-1 rounded-full"
-                style={{ background: "rgba(255,255,255,0.25)", color: "#fff" }}
+                style={{ background: "rgba(255,255,255,0.25)", color: "#fff", fontFamily: "Montserrat" }}
               >
                 {tag}
               </span>
@@ -219,34 +181,23 @@ function ContinueCard({ book, chapterLabel, badge }: { book: any; chapterLabel: 
           <img src={book.coverUrl} className="w-full h-full object-cover" />
         </div>
         <p
-          className="text-[11px] font-semibold mt-1.5"
-          style={{ color: badge === "Devam Et" ? "#1a1a2e" : "#c9184a" }}
+          className="text-[11px] mt-1.5"
+          style={{ fontFamily: "Montserrat", fontWeight: 600, color: badge === "Devam Et" ? "#1a1a2e" : "#c9184a" }}
         >
           {badge}
         </p>
-        <p className="text-[10px] mt-0.5" style={{ color: "#6c757d" }}>{chapterLabel}</p>
+        <p className="text-[10px] mt-0.5" style={{ fontFamily: "Montserrat", fontWeight: 400, color: "#6c757d" }}>
+          {chapterLabel}
+        </p>
       </div>
     </Link>
   );
 }
 
-function BookCard({
-  book,
-  width,
-  height,
-  compact,
-}: {
-  book: any;
-  width: number;
-  height: number;
-  compact?: boolean;
-}) {
+function BookCard({ book, width, height }: { book: any; width: number; height: number }) {
   return (
     <Link href={`/book/${book.id}`}>
-      <div
-        className="rounded-xl overflow-hidden shadow-sm flex-shrink-0"
-        style={{ width, height }}
-      >
+      <div className="rounded-xl overflow-hidden shadow-sm flex-shrink-0" style={{ width, height }}>
         <img src={book.coverUrl} className="w-full h-full object-cover" />
       </div>
     </Link>
@@ -256,22 +207,14 @@ function BookCard({
 function RecommendCard({ book }: { book: any }) {
   return (
     <Link href={`/book/${book.id}`}>
-      <div
-        className="rounded-2xl overflow-hidden p-2.5"
-        style={{ background: "#ffffff", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}
-      >
-        <img
-          src={book.coverUrl}
-          className="w-full object-cover rounded-xl mb-2"
-          style={{ height: 150 }}
-        />
-        <p
-          className="text-xs font-bold line-clamp-2"
-          style={{ color: "#1a1a2e", fontFamily: "Montserrat" }}
-        >
+      <div className="rounded-2xl overflow-hidden p-2.5" style={{ background: "#ffffff", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}>
+        <img src={book.coverUrl} className="w-full object-cover rounded-xl mb-2" style={{ height: 150 }} />
+        <p className="text-xs line-clamp-2" style={{ fontFamily: "Montserrat", fontWeight: 700, color: "#1a1a2e" }}>
           {book.title}
         </p>
-        <p className="text-[11px] mt-0.5" style={{ color: "#6c757d" }}>{book.author}</p>
+        <p className="text-[11px] mt-0.5" style={{ fontFamily: "Montserrat", fontWeight: 400, color: "#6c757d" }}>
+          {book.author}
+        </p>
       </div>
     </Link>
   );
