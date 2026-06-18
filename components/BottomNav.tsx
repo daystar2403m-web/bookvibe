@@ -25,10 +25,10 @@ export default function BottomNav() {
         return (
           <Link key={href} href={href}>
             <div
-              className="w-11 h-11 rounded-full flex items-center justify-center transition-all"
+              className="w-12 h-12 rounded-full flex items-center justify-center transition-all"
               style={isActive ? { background: "#feb0c1" } : { background: "transparent" }}
             >
-              <Icon size={20} color="#1a1a2e" strokeWidth={1.8} />
+              <Icon size={26} color="#1a1a2e" strokeWidth={1.8} />
             </div>
           </Link>
         );
