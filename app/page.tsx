@@ -55,10 +55,25 @@ export default function Home() {
         </Link>
       </div>
 
-      {/* BANNER */}
-      <div style={{ padding: "0 13px", marginBottom: 18 }}>
-        <FeaturedBanner book={featuredBook} />
+      {/* BANNER - kaydırılabilir */}
+<div style={{ marginBottom: 18 }}>
+  <div
+    style={{
+      display: "flex",
+      gap: 10,
+      overflowX: "auto",
+      padding: "0 13px",
+      scrollbarWidth: "none",
+      scrollSnapType: "x mandatory",
+    }}
+  >
+    {MOCK_BOOKS.map((book) => (
+      <div key={book.id} style={{ minWidth: "calc(100% - 26px)", scrollSnapAlign: "start" }}>
+        <FeaturedBanner book={book} />
       </div>
+    ))}
+  </div>
+</div>
 
       {/* DEVAM ET */}
       <div style={{ marginBottom: 18 }}>
