@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Star } from "lucide-react";
-import { useCoverPalette } from "@/hooks/useCoverPalette";
+import { useCoverPalette } from "@/lib/hooks/useCoverPalette";
 
 export default function FeaturedBanner({ book }: { book: any }) {
   const palette = useCoverPalette(book.coverUrl);
