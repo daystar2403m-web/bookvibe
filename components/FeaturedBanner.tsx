@@ -26,13 +26,25 @@ export default function FeaturedBanner({ book }: { book: any }) {
           style={{
             position: "absolute",
             inset: 0,
+            background: backgroundGradient,
+            transition: "background 0.5s ease",
+          }}
+        />
+
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
             backgroundImage: `url(${book.coverUrl})`,
             backgroundSize: "cover",
-            backgroundPosition: "center 30%",
-            filter: "blur(18px) saturate(135%)",
-            transform: "scale(1.25)",
-            transition: "opacity 0.5s ease",
-            opacity: palette.ready ? 1 : 0,
+            backgroundPosition: "center 28%",
+            opacity: 0.32,
+            mixBlendMode: "soft-light",
+            WebkitMaskImage:
+              "radial-gradient(ellipse 85% 90% at 70% 40%, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0) 100%)",
+            maskImage:
+              "radial-gradient(ellipse 85% 90% at 70% 40%, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 55%, rgba(0,0,0,0) 100%)",
           }}
         />
 
@@ -41,19 +53,7 @@ export default function FeaturedBanner({ book }: { book: any }) {
           style={{
             position: "absolute",
             inset: 0,
-            background: backgroundGradient,
-            opacity: palette.ready ? 0.78 : 1,
-            mixBlendMode: palette.ready ? "multiply" : "normal",
-            transition: "opacity 0.5s ease",
-          }}
-        />
-
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.55) 100%)`,
+            background: `linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.3) 45%, rgba(0,0,0,0.5) 100%)`,
           }}
         />
 
