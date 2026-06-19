@@ -1,10 +1,11 @@
 "use client";
 
 import BottomNav from "@/components/BottomNav";
+import FeaturedBanner from "@/components/FeaturedBanner";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MOCK_BOOKS } from "@/lib/mockBooks";
-import { Search, User, Star, ChevronRight } from "lucide-react";
+import { Search, User, ChevronRight } from "lucide-react";
 
 export default function Home() {
   const [continueBooks, setContinueBooks] = useState<{ bookId: string; chapter: number }[]>([]);
@@ -126,35 +127,6 @@ export default function Home() {
 
       <BottomNav />
     </div>
-  );
-}
-
-function FeaturedBanner({ book }: { book: any }) {
-  const tags = ["Fantastik", "Romantik", "Macera"];
-  return (
-    <Link href={`/book/${book.id}`}>
-      <div style={{ position: "relative", borderRadius: 12, overflow: "hidden", background: "linear-gradient(135deg, #ff7a59 0%, #ff4d6d 60%, #c9184a 100%)", minHeight: 126, display: "flex", gap: 10, padding: "14px 12px 12px" }}>
-        <div style={{ position: "absolute", top: 8, left: 8, display: "flex", alignItems: "center", gap: 4, background: "rgba(255,255,255,0.92)", borderRadius: 999, padding: "3px 9px" }}>
-          <Star size={9} fill="#fff" color="#fff" strokeWidth={0} />
-          <span style={{ fontSize: 8, fontWeight: 700, color: "#c9184a", fontFamily: "Montserrat", letterSpacing: 0.4 }}>GÜNÜN ÖNERİSİ</span>
-        </div>
-        <div style={{ flexShrink: 0, marginTop: 18 }}>
-          <img src={book.coverUrl} style={{ width: 67, height: 99, objectFit: "cover", borderRadius: 8, border: "2px solid rgba(255,255,255,0.3)", boxShadow: "0 4px 12px rgba(0,0,0,0.2)" }} />
-        </div>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", marginTop: 18, minWidth: 0 }}>
-          <p style={{ fontFamily: "Montserrat", fontWeight: 800, fontSize: 16, color: "#fff", lineHeight: 1.2, margin: 0 }}>{book.title}</p>
-          <p style={{ fontFamily: "Montserrat", fontWeight: 600, fontSize: 11, color: "rgba(255,255,255,0.85)", marginTop: 3 }}>{book.author}</p>
-          <p style={{ fontFamily: "Montserrat", fontWeight: 400, fontSize: 10, color: "rgba(255,255,255,0.88)", marginTop: 6, fontStyle: "italic", lineHeight: 1.4 }}>
-            "İnsan bir kutu kibrite benzer. Varolur, yanar ve söner."
-          </p>
-          <div style={{ display: "flex", gap: 5, marginTop: 8, flexWrap: "wrap" }}>
-            {tags.map((tag) => (
-              <span key={tag} style={{ fontSize: 8, fontWeight: 600, padding: "2px 8px", borderRadius: 999, background: "rgba(255,255,255,0.22)", color: "#fff", fontFamily: "Montserrat" }}>{tag}</span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </Link>
   );
 }
 
