@@ -17,7 +17,7 @@ export default function FeaturedBanner({ book }: { book: any }) {
           position: "relative",
           borderRadius: 16,
           overflow: "hidden",
-          minHeight: 140,
+          minHeight: 126,
           isolation: "isolate",
         }}
       >
@@ -57,55 +57,57 @@ export default function FeaturedBanner({ book }: { book: any }) {
           }}
         />
 
-        <div style={{ position: "relative", display: "flex", gap: 12, padding: "16px 13px 14px" }}>
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              background: "rgba(255,255,255,0.95)",
-              borderRadius: 999,
-              padding: "3px 9px",
-            }}
-          >
-            <Star size={9} fill={palette.accent} color={palette.accent} strokeWidth={0} />
-            <span
+        <div style={{ position: "relative", display: "flex", gap: 10, padding: "14px 12px 12px" }}>
+          {/* Kapak + Rozet kolonu */}
+          <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            {/* Rozet — kapağın hemen üstünde, sola hizalı */}
+            <div
               style={{
-                fontSize: 8,
-                fontWeight: 700,
-                color: palette.accent,
-                fontFamily: "Montserrat",
-                letterSpacing: 0.4,
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+                background: "rgba(255,255,255,0.95)",
+                borderRadius: 999,
+                padding: "3px 9px",
+                marginBottom: 6,
               }}
             >
-              GÜNÜN ÖNERİSİ
-            </span>
-          </div>
+              <Star size={9} fill={palette.accent} color={palette.accent} strokeWidth={0} />
+              <span
+                style={{
+                  fontSize: 8,
+                  fontWeight: 700,
+                  color: palette.accent,
+                  fontFamily: "Montserrat",
+                  letterSpacing: 0.4,
+                }}
+              >
+                GÜNÜN ÖNERİSİ
+              </span>
+            </div>
 
-          <div style={{ flexShrink: 0, marginTop: 22 }}>
+            {/* Kapak */}
             <img
               src={book.coverUrl}
               style={{
-                width: 70,
-                height: 104,
+                width: 67,
+                height: 99,
                 objectFit: "cover",
-                borderRadius: 9,
+                borderRadius: 8,
                 border: `2px solid ${palette.accent}55`,
                 boxShadow: `0 8px 20px -4px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.08)`,
               }}
             />
           </div>
 
+          {/* Bilgi bloğu */}
           <div
             style={{
               flex: 1,
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
-              marginTop: 22,
+              marginTop: 0,
               minWidth: 0,
             }}
           >
@@ -134,7 +136,21 @@ export default function FeaturedBanner({ book }: { book: any }) {
               {book.author}
             </p>
 
-            <div style={{ display: "flex", gap: 5, marginTop: 9, flexWrap: "wrap" }}>
+            <p
+              style={{
+                fontFamily: "Montserrat",
+                fontWeight: 400,
+                fontSize: 10,
+                color: palette.textOnDark,
+                marginTop: 7,
+                fontStyle: "italic",
+                lineHeight: 1.4,
+              }}
+            >
+              "İnsan bir kutu kibrite benzer. Varolur, yanar ve söner."
+            </p>
+
+            <div style={{ display: "flex", gap: 5, marginTop: 8, flexWrap: "wrap" }}>
               {tags.map((tag) => (
                 <span
                   key={tag}
