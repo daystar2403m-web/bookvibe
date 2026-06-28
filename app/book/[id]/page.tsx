@@ -29,7 +29,44 @@ export default function BookDetailPage() {
   const [activeBoard, setActiveBoard] = useState<any>(null);
   const [creatingBoard, setCreatingBoard] = useState(false);
   const [newBoardName, setNewBoardName] = useState("");
-  const [boards, setBoards] = useState<any[]>([]);
+  const [summaryExpanded, setSummaryExpanded] = useState(false);
+
+  // Pinterest tarzı panolar (görseldeki tasarıma uygun)
+  const [boards, setBoards] = useState<any[]>([
+    {
+      id: "1",
+      name: "Wallpapers",
+      pinCount: 994,
+      timeLabel: "Şimdi",
+      images: [
+        "https://picsum.photos/seed/wp1/400/500",
+        "https://picsum.photos/seed/wp2/300/300",
+        "https://picsum.photos/seed/wp3/300/300",
+      ],
+    },
+    {
+      id: "2",
+      name: "isimsiz",
+      pinCount: 37,
+      timeLabel: "3g",
+      images: [
+        "https://picsum.photos/seed/un1/400/500",
+        "https://picsum.photos/seed/un2/300/300",
+        "https://picsum.photos/seed/un3/300/300",
+      ],
+    },
+    {
+      id: "3",
+      name: "kelimelerdeki ahenk",
+      pinCount: 218,
+      timeLabel: "2h",
+      images: [
+        "https://picsum.photos/seed/kw1/400/500",
+        "https://picsum.photos/seed/kw2/300/300",
+        "https://picsum.photos/seed/kw3/300/300",
+      ],
+    },
+  ]);
 
   useEffect(() => {
     const found = MOCK_BOOKS.find((b) => b.id === id);
@@ -50,11 +87,9 @@ export default function BookDetailPage() {
     { title: "En İyi Hayat", progress: 0, likes: "2.7K" },
   ];
 
-  const boardImages = [
-    "https://picsum.photos/seed/board1/400/400",
-    "https://picsum.photos/seed/board2/400/400",
-    "https://picsum.photos/seed/board3/400/400",
-  ];
+  const bookSummary =
+    book.summary ||
+    "Nora Seed, hayatının anlamsız olduğuna inanarak yaşama son vermeye karar verdiği gece kendini gizemli bir kütüphanede bulur. Bu kütüphanedeki her kitap, farklı bir seçim yapmış olsaydı yaşayacağı alternatif bir hayatı temsil eder. Nora, pişmanlıklarıyla yüzleşirken hangi hayatın gerçekten 'doğru' olduğunu sorgulamaya başlar.";
 
   return (
     <div
@@ -249,8 +284,42 @@ export default function BookDetailPage() {
         </button>
       </div>
 
-      {/* BÖLÜMLER */}
+      {/* KİTAP ÖZETİ */}
       <div style={{ padding: "26px 16px 0" }}>
+        <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", marginBottom: 10 }}>Kitap Özeti</h3>
+        <p
+          style={{
+            fontSize: 13,
+            lineHeight: 1.6,
+            color: "#495057",
+            margin: 0,
+            display: "-webkit-box",
+            WebkitBoxOrient: "vertical",
+            WebkitLineClamp: summaryExpanded ? undefined : 4,
+            overflow: summaryExpanded ? "visible" : "hidden",
+          }}
+        >
+          {bookSummary}
+        </p>
+        <button
+          onClick={() => setSummaryExpanded(!summaryExpanded)}
+          style={{
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            marginTop: 6,
+            fontSize: 12.5,
+            fontWeight: 700,
+            color: palette.dark || "#1a1a2e",
+          }}
+        >
+          {summaryExpanded ? "Daha az göster" : "Devamını oku"}
+        </button>
+      </div>
+
+      {/* BÖLÜMLER */}
+      <div style={{ padding: "20px 16px 0" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
           <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", margin: 0 }}>Bölümler</h3>
           <ChevronRight size={16} color="#adb5bd" />
@@ -282,9 +351,9 @@ export default function BookDetailPage() {
         </div>
       </div>
 
-      {/* KİTAP PANOSU */}
+      {/* KİTAP PANOSU - Pinterest tarzı */}
       <div style={{ padding: "26px 16px 0" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
           <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", margin: 0 }}>Kitap Panosu</h3>
           <button
             onClick={() => setCreatingBoard(true)}
@@ -295,104 +364,71 @@ export default function BookDetailPage() {
           </button>
         </div>
 
-        <button
-          onClick={() => setGalleryOpen(true)}
-          style={{
-            position: "relative",
-            width: "100%",
-            height: 110,
-            borderRadius: 16,
-            overflow: "hidden",
-            border: "none",
-            cursor: "pointer",
-            padding: 0,
-            display: "flex",
-          }}
-        >
-          {boardImages.map((img, i) => (
-            <div key={i} style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-              <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            </div>
-          ))}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "rgba(0,0,0,0.15)",
-            }}
-          />
-        </button>
-
-        {/* Kullanıcı tarafından oluşturulan panolar */}
-        {boards.length > 0 && (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
-            {boards.map((b) => (
-              <button
-                key={b.id}
-                onClick={() => setActiveBoard(b)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  background: "#fafafa",
-                  border: "1px solid #f1f3f5",
-                  borderRadius: 14,
-                  padding: 10,
-                  cursor: "pointer",
-                  textAlign: "left",
-                }}
-              >
-                <div style={{ display: "flex", borderRadius: 10, overflow: "hidden", width: 60, height: 44, flexShrink: 0 }}>
-                  {b.images.slice(0, 2).map((img: string, i: number) => (
-                    <img key={i} src={img} style={{ width: "50%", height: "100%", objectFit: "cover" }} />
-                  ))}
-                </div>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a2e" }}>{b.name}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* GALLERY OVERLAY */}
-      {galleryOpen && (
         <div
           style={{
-            position: "fixed",
-            inset: 0,
-            background: "#000",
-            zIndex: 100,
             display: "flex",
-            flexDirection: "column",
+            gap: 14,
+            overflowX: "auto",
+            paddingBottom: 4,
+            scrollbarWidth: "none",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "flex-end", padding: "20px 16px" }}>
+          {boards.map((b) => (
             <button
-              onClick={() => setGalleryOpen(false)}
+              key={b.id}
+              onClick={() => setActiveBoard(b)}
               style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                background: "rgba(255,255,255,0.15)",
+                flex: "0 0 auto",
+                width: 165,
+                background: "none",
                 border: "none",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
                 cursor: "pointer",
+                textAlign: "left",
+                padding: 0,
               }}
             >
-              <X size={18} color="#fff" />
-            </button>
-          </div>
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 2, padding: "0 0 20px" }}>
-            {boardImages.map((img, i) => (
-              <div key={i} style={{ flex: 1, overflow: "hidden" }}>
-                <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              {/* 1 büyük + 2 küçük görsel mozaik */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: 3,
+                  height: 130,
+                  borderRadius: 14,
+                  overflow: "hidden",
+                }}
+              >
+                <div style={{ flex: 1.3, overflow: "hidden" }}>
+                  <img src={b.images[0]} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3 }}>
+                  <div style={{ flex: 1, overflow: "hidden" }}>
+                    <img src={b.images[1]} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                  <div style={{ flex: 1, overflow: "hidden" }}>
+                    <img src={b.images[2]} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
+              <p
+                style={{
+                  fontSize: 14,
+                  fontWeight: 800,
+                  color: "#1a1a2e",
+                  margin: "10px 0 2px",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {b.name}
+              </p>
+              <span style={{ fontSize: 11.5, color: "#6c757d", fontWeight: 500 }}>
+                {b.pinCount} Pin&nbsp;&nbsp;{b.timeLabel}
+              </span>
+            </button>
+          ))}
         </div>
-      )}
+      </div>
 
       {/* PANO DETAY OVERLAY */}
       {activeBoard && (
@@ -470,6 +506,8 @@ export default function BookDetailPage() {
                   {
                     id: Date.now().toString(),
                     name: newBoardName.trim(),
+                    pinCount: 0,
+                    timeLabel: "Şimdi",
                     images: [
                       "https://picsum.photos/seed/new1/400/500",
                       "https://picsum.photos/seed/new2/300/300",
