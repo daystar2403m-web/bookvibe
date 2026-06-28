@@ -4,17 +4,23 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { MOCK_BOOKS } from "@/lib/mockBooks";
 import BottomNav from "@/components/BottomNav";
-import { ChevronLeft, Bookmark, Share2, MoreHorizontal, Star, BookOpen, List, Lock, CheckCircle, Play, Plus, ChevronDown, ChevronRight, Calendar, RefreshCw, Hash, Type, Globe } from "lucide-react";
+import {
+  ChevronLeft,
+  MoreHorizontal,
+  Star,
+  Heart,
+  Bookmark,
+  BookOpen,
+  ChevronRight,
+  Play,
+} from "lucide-react";
 
 export default function BookDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [book, setBook] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<"chapters" | "gallery">("chapters");
-  const [showFullDesc, setShowFullDesc] = useState(false);
-  const [inLibrary, setInLibrary] = useState(false);
-  const [progress] = useState(35);
-  const currentChapter = 3;
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const found = MOCK_BOOKS.find((b) => b.id === id);
@@ -23,37 +29,30 @@ export default function BookDetailPage() {
 
   if (!book) return null;
 
-  const tags = ["Fantastik", "Romantik", "Savaş", "Macera"];
-  const chapters = book.chapters || [
-    { id: 1, title: "Küller Arasındaki Taç", date: "14 Şub 2024", status: "read" },
-    { id: 2, title: "Sessizliğin Fısıltısı", date: "17 Şub 2024", status: "read" },
-    { id: 3, title: "Gölgenin Yükselişi", date: "19 Şub 2024", status: "current" },
-    { id: 4, title: "Kayıp Miras", date: "21 Şub 2024", status: "locked" },
-    { id: 5, title: "Kan ve İhanet", date: "24 Şub 2024", status: "locked" },
-    { id: 37, title: "Son Kehanet", date: "--", status: "locked" },
+  const tags = ["Fantastik", "Romantik", "Macera"];
+
+  const chapters = [
+    { title: "Gece Yarısı Kütüphanesi", progress: 100 },
+    { title: "Seçimler ve Pişmanlıklar", progress: 60 },
+    { title: "Farklı Hayatlar", progress: 20 },
+    { title: "Gerçekle Yüzleşme", progress: 0 },
+    { title: "En İyi Hayat", progress: 0 },
   ];
 
-  const galleryImages = [
-    "https://picsum.photos/seed/g1/200/160",
-    "https://picsum.photos/seed/g2/200/160",
-    "https://picsum.photos/seed/g3/200/160",
-    "https://picsum.photos/seed/g4/200/160",
-    "https://picsum.photos/seed/g5/200/160",
-    "https://picsum.photos/seed/g6/200/160",
+  const media = [
+    { type: "video", label: "Tanıtım Videosu", sub: "1:32", img: "https://picsum.photos/seed/m1/200/140" },
+    { type: "video", label: "Yazar Röportajı", sub: "4:18", img: "https://picsum.photos/seed/m2/200/140" },
+    { type: "image", label: "Kitaptan Alıntılar", sub: "12 görsel", img: "https://picsum.photos/seed/m3/200/140" },
+    { type: "image", label: "Okuyucu Fotoğrafları", sub: "23 fotoğraf", img: "https://picsum.photos/seed/m4/200/140" },
   ];
-
-  const desc = `Tahtın varisi olmak için doğduğunu sanıyordu. Gerçek ise küllerin içinden doğacaktı.\n\nİmparatorluk, yıllardır süren savaşların ardından yıkımın eşiğinde. Karanlık güçler uyanıyor ve eski kehanetler yeniden yazılıyor. Alevler yükselirken dostlar düşmana dönüşüyor, sırlar açığa çıkıyor.`;
-
-  const shortDesc = desc.split("\n\n")[0];
 
   return (
     <div
       style={{
         minHeight: "100vh",
-        background: "#0d0d18",
+        background: "#fff",
         fontFamily: "Montserrat, sans-serif",
-        color: "#fff",
-        paddingBottom: 80,
+        paddingBottom: 90,
       }}
     >
       {/* TOP BAR */}
@@ -62,521 +61,311 @@ export default function BookDetailPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "52px 16px 12px",
-          position: "sticky",
-          top: 0,
-          zIndex: 30,
-          background: "rgba(13,13,24,0.85)",
-          backdropFilter: "blur(12px)",
+          padding: "20px 16px 0",
         }}
       >
         <button
           onClick={() => router.back()}
+          style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }}
+        >
+          <ChevronLeft size={24} color="#1a1a2e" strokeWidth={2.2} />
+        </button>
+        <button style={{ background: "none", border: "none", cursor: "pointer", padding: 6 }}>
+          <MoreHorizontal size={22} color="#1a1a2e" />
+        </button>
+      </div>
+
+      {/* HERO: COVER + INFO */}
+      <div style={{ display: "flex", gap: 18, padding: "12px 16px 0" }}>
+        <div style={{ position: "relative", flexShrink: 0 }}>
+          <img
+            src={book.coverUrl}
+            style={{
+              width: 150,
+              height: 215,
+              objectFit: "cover",
+              borderRadius: 8,
+              boxShadow: "0 12px 30px -8px rgba(0,0,0,0.25)",
+            }}
+          />
+          {/* Badge */}
+          <div
+            style={{
+              position: "absolute",
+              top: -18,
+              left: -18,
+              width: 64,
+              height: 64,
+              borderRadius: "50%",
+              background: "#f6e9d8",
+              border: "2px solid #e8d4b8",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+            }}
+          >
+            <span style={{ fontSize: 6.5, fontWeight: 700, color: "#8a6d3b", lineHeight: 1.3 }}>
+              GOODREADS<br />EN İYİ<br />KURGU<br />2021
+            </span>
+          </div>
+        </div>
+
+        <div style={{ flex: 1, minWidth: 0, paddingTop: 6 }}>
+          <h1 style={{ fontSize: 20, fontWeight: 800, color: "#1a1a2e", lineHeight: 1.2, margin: 0 }}>
+            {book.title}
+          </h1>
+          <p style={{ fontSize: 14, fontWeight: 600, color: "#feb0c1", marginTop: 4 }}>
+            {book.author}
+          </p>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10 }}>
+            <Star size={15} fill="#feb0c1" color="#feb0c1" />
+            <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a2e" }}>4.6</span>
+            <span style={{ fontSize: 12, color: "#adb5bd" }}>|</span>
+            <span style={{ fontSize: 12, color: "#6c757d" }}>96B değerlendirme</span>
+          </div>
+        </div>
+      </div>
+
+      {/* TAGS */}
+      <div style={{ display: "flex", gap: 8, padding: "16px 16px 0", flexWrap: "wrap" }}>
+        {tags.map((tag) => (
+          <span
+            key={tag}
+            style={{
+              fontSize: 12,
+              fontWeight: 600,
+              padding: "7px 16px",
+              borderRadius: 999,
+              background: "#feeaee",
+              color: "#1a1a2e",
+            }}
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      {/* QUOTE */}
+      <p
+        style={{
+          fontSize: 15,
+          fontStyle: "italic",
+          color: "#1a1a2e",
+          lineHeight: 1.5,
+          padding: "16px 16px 0",
+          margin: 0,
+          fontWeight: 500,
+        }}
+      >
+        "İnsan bir kutu kibrite benzer.<br />Varolur, yanar ve söner."
+      </p>
+
+      {/* ACTION ROW */}
+      <div style={{ display: "flex", gap: 10, padding: "18px 16px 0" }}>
+        <button
+          onClick={() => router.push(`/book/${book.id}?mode=read&chapter=0`)}
           style={{
-            width: 36,
-            height: 36,
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            background: "#feb0c1",
+            border: "none",
+            borderRadius: 16,
+            padding: "13px 0",
+            color: "#1a1a2e",
+            fontSize: 14,
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          <BookOpen size={16} />
+          Okumaya Başla
+        </button>
+        <button
+          onClick={() => setLiked(!liked)}
+          style={{
+            width: 48,
+            height: 48,
             borderRadius: "50%",
-            background: "rgba(255,255,255,0.08)",
-            border: "1px solid rgba(255,255,255,0.1)",
+            background: "#fef0f2",
+            border: "none",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
+            flexShrink: 0,
           }}
         >
-          <ChevronLeft size={18} color="#fff" />
+          <Heart size={18} color="#1a1a2e" fill={liked ? "#1a1a2e" : "none"} />
         </button>
-        <div style={{ display: "flex", gap: 8 }}>
-          {[Bookmark, Share2, MoreHorizontal].map((Icon, i) => (
-            <button
-              key={i}
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: "50%",
-                background: "rgba(255,255,255,0.08)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-              }}
-            >
-              <Icon size={16} color="#fff" />
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* HERO SECTION */}
-      <div
-        style={{
-          position: "relative",
-          overflow: "hidden",
-          background: "linear-gradient(135deg, #1a0a2e 0%, #2d1b69 50%, #1a0a2e 100%)",
-        }}
-      >
-        {/* Blur background */}
-        <div
+        <button
+          onClick={() => setSaved(!saved)}
           style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage: `url(${book.coverUrl})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            filter: "blur(20px) brightness(0.3)",
-            transform: "scale(1.1)",
+            width: 48,
+            height: 48,
+            borderRadius: "50%",
+            background: "#fef0f2",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            flexShrink: 0,
           }}
-        />
-        <div style={{ position: "relative", zIndex: 1, padding: "16px 16px 20px" }}>
-          <div style={{ display: "flex", gap: 14 }}>
-            {/* Cover */}
-            <div style={{ flexShrink: 0 }}>
-              <img
-                src={book.coverUrl}
-                style={{
-                  width: 140,
-                  height: 200,
-                  objectFit: "cover",
-                  borderRadius: 12,
-                  boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-                }}
-              />
-              <button
-                style={{
-                  marginTop: 10,
-                  width: 140,
-                  padding: "8px 0",
-                  background: "rgba(255,255,255,0.1)",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  borderRadius: 8,
-                  color: "#fff",
-                  fontSize: 12,
-                  fontFamily: "Montserrat",
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                }}
-              >
-                <BookOpen size={13} />
-                Önizleme Oku
-              </button>
-            </div>
-
-            {/* Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              {/* Editör rozeti */}
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 5,
-                  background: "rgba(139,92,246,0.25)",
-                  border: "1px solid rgba(139,92,246,0.5)",
-                  borderRadius: 999,
-                  padding: "3px 10px",
-                  marginBottom: 8,
-                }}
-              >
-                <Star size={10} fill="#a78bfa" color="#a78bfa" />
-                <span style={{ fontSize: 10, fontWeight: 600, color: "#a78bfa" }}>Editörün Seçimi</span>
-              </div>
-
-              <h1 style={{ fontSize: 22, fontWeight: 800, color: "#fff", lineHeight: 1.2, marginBottom: 8 }}>
-                {book.title}
-              </h1>
-              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.65)", lineHeight: 1.5, marginBottom: 12 }}>
-                Karanlığın içinden doğacak olan, küllerin içinden yükselecek.
-              </p>
-
-              {/* Stats row */}
-              <div style={{ display: "flex", gap: 14, marginBottom: 12 }}>
-                <StatItem icon={<Star size={12} fill="#f59e0b" color="#f59e0b" />} value="4.8" sub="(12.6B)" />
-                <StatItem icon={<BookOpen size={12} color="rgba(255,255,255,0.6)" />} value="324B" sub="Okunma" />
-                <StatItem icon={<List size={12} color="rgba(255,255,255,0.6)" />} value="37" sub="Bölüm" />
-                <StatItem icon={<Globe size={12} color="rgba(255,255,255,0.6)" />} value="Aa" sub="Türkçe" />
-              </div>
-
-              {/* Tags */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
-                {tags.map((tag) => (
-                  <span
-                    key={tag}
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 600,
-                      padding: "4px 10px",
-                      borderRadius: 999,
-                      background: "rgba(255,255,255,0.08)",
-                      border: "1px solid rgba(255,255,255,0.15)",
-                      color: "rgba(255,255,255,0.8)",
-                    }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-                <span
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 600,
-                    padding: "4px 10px",
-                    borderRadius: 999,
-                    background: "rgba(255,255,255,0.08)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    color: "rgba(255,255,255,0.8)",
-                  }}
-                >
-                  +
-                </span>
-              </div>
-
-              {/* CTA Buttons */}
-              <div style={{ display: "flex", gap: 8 }}>
-                <button
-                  onClick={() => router.push(`/book/${book.id}?mode=read&chapter=${currentChapter - 1}`)}
-                  style={{
-                    flex: 1,
-                    padding: "10px 0",
-                    background: "linear-gradient(135deg, #7c3aed, #4f46e5)",
-                    border: "none",
-                    borderRadius: 10,
-                    color: "#fff",
-                    fontSize: 13,
-                    fontFamily: "Montserrat",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 6,
-                  }}
-                >
-                  <BookOpen size={14} />
-                  Devam Et
-                </button>
-                <button
-                  onClick={() => setInLibrary(!inLibrary)}
-                  style={{
-                    flex: 1,
-                    padding: "10px 0",
-                    background: inLibrary ? "rgba(139,92,246,0.2)" : "rgba(255,255,255,0.08)",
-                    border: `1px solid ${inLibrary ? "#7c3aed" : "rgba(255,255,255,0.2)"}`,
-                    borderRadius: 10,
-                    color: "#fff",
-                    fontSize: 12,
-                    fontFamily: "Montserrat",
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: 5,
-                  }}
-                >
-                  <Plus size={13} />
-                  {inLibrary ? "Kütüphanede" : "Kütüphaneye Ekle"}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          <div style={{ marginTop: 14 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontWeight: 500 }}>
-                Bölüm {currentChapter}: Gölgenin Yükselişi
-              </span>
-              <span style={{ fontSize: 11, color: "#a78bfa", fontWeight: 600 }}>%{progress}</span>
-            </div>
-            <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 999, overflow: "hidden" }}>
-              <div
-                style={{
-                  height: "100%",
-                  width: `${progress}%`,
-                  background: "linear-gradient(90deg, #7c3aed, #a78bfa)",
-                  borderRadius: 999,
-                }}
-              />
-            </div>
-          </div>
-        </div>
+        >
+          <Bookmark size={18} color="#1a1a2e" fill={saved ? "#1a1a2e" : "none"} />
+        </button>
       </div>
 
-      {/* MAIN CONTENT */}
-      <div style={{ padding: "0 14px" }}>
-
-        {/* AÇIKLAMA + BİLGİ */}
-        <div style={{ display: "flex", gap: 14, marginTop: 16, marginBottom: 20 }}>
-          {/* Açıklama */}
-          <div
-            style={{
-              flex: 1,
-              background: "#13131f",
-              borderRadius: 14,
-              padding: "14px 14px",
-              border: "1px solid rgba(255,255,255,0.06)",
-            }}
-          >
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 10 }}>Açıklama</h3>
-            <p style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", lineHeight: 1.7, whiteSpace: "pre-line" }}>
-              {showFullDesc ? desc : shortDesc}
+      {/* AUTHOR CARD */}
+      <div style={{ padding: "22px 16px 0" }}>
+        <button
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            background: "#f8f9fa",
+            borderRadius: 16,
+            padding: 14,
+            border: "none",
+            cursor: "pointer",
+            textAlign: "left",
+          }}
+        >
+          <img
+            src="https://picsum.photos/seed/matthaig/80/80"
+            style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }}
+          />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: "#1a1a2e", margin: 0 }}>{book.author}</p>
+            <p style={{ fontSize: 11.5, color: "#6c757d", lineHeight: 1.5, margin: "4px 0 0" }}>
+              {book.author}, İngiliz yazar ve gazetecidir. Romanları, denemeleri ve çocuk kitaplarıyla tanınır. {book.title}, onun en çok okunan eserlerinden biridir.
             </p>
-            <button
-              onClick={() => setShowFullDesc(!showFullDesc)}
-              style={{
-                marginTop: 8,
-                background: "none",
-                border: "none",
-                color: "#a78bfa",
-                fontSize: 11,
-                fontWeight: 600,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 3,
-                padding: 0,
-                fontFamily: "Montserrat",
-              }}
-            >
-              {showFullDesc ? "Daha az" : "Daha fazlası"}
-              <ChevronDown size={12} style={{ transform: showFullDesc ? "rotate(180deg)" : "none" }} />
-            </button>
           </div>
+          <ChevronRight size={18} color="#adb5bd" style={{ flexShrink: 0 }} />
+        </button>
+      </div>
 
-          {/* Bilgi */}
-          <div
-            style={{
-              width: 160,
-              flexShrink: 0,
-              background: "#13131f",
-              borderRadius: 14,
-              padding: "14px 12px",
-              border: "1px solid rgba(255,255,255,0.06)",
-            }}
-          >
-            {[
-              { Icon: Calendar, label: "Yayınlanma", value: "14 Şubat 2024" },
-              { Icon: RefreshCw, label: "Güncellenme", value: "2 gün önce" },
-              { Icon: List, label: "Bölümler", value: "37" },
-              { Icon: Hash, label: "Kelime Sayısı", value: "412K" },
-              { Icon: Globe, label: "Dil", value: "Türkçe" },
-            ].map(({ Icon, label, value }) => (
-              <div key={label} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 12 }}>
-                <Icon size={13} color="rgba(255,255,255,0.4)" style={{ marginTop: 1, flexShrink: 0 }} />
-                <div>
-                  <p style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", margin: 0 }}>{label}</p>
-                  <p style={{ fontSize: 11, color: "#fff", fontWeight: 600, margin: "2px 0 0" }}>{value}</p>
+      {/* ABOUT + CHAPTERS */}
+      <div style={{ display: "flex", gap: 16, padding: "22px 16px 0", alignItems: "flex-start" }}>
+        {/* About */}
+        <div style={{ flex: 1.1, minWidth: 0 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", marginBottom: 10 }}>
+            Kitap Hakkında
+          </h3>
+          <p style={{ fontSize: 12, color: "#495057", lineHeight: 1.7 }}>
+            Nora Seed, hayatının en karanlık anında kendini gece yarısı kütüphanesinde bulur. Bu kütüphane, pişmanlık duyduğu hayat seçimlerinin farklı olasılıklarını keşfetmesine olanak tanır.
+          </p>
+          <p style={{ fontSize: 12, color: "#495057", lineHeight: 1.7, fontStyle: "italic", marginTop: 10 }}>
+            Her kitap, başka bir yaşamdır. Peki ya en iyi hayat, aslında yaşadığımız hayat ise?
+          </p>
+        </div>
+
+        {/* Chapters */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", margin: 0 }}>Bölümler</h3>
+            <ChevronRight size={16} color="#adb5bd" />
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+            {chapters.map((ch, i) => (
+              <div key={i}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                  <span style={{ fontSize: 11, color: "#1a1a2e", fontWeight: 500 }}>
+                    {i + 1}. {ch.title}
+                  </span>
+                  <span style={{ fontSize: 11, color: "#6c757d", fontWeight: 600 }}>%{ch.progress}</span>
+                </div>
+                <div style={{ height: 4, background: "#f1f3f5", borderRadius: 999, overflow: "hidden" }}>
+                  <div
+                    style={{
+                      height: "100%",
+                      width: `${ch.progress}%`,
+                      background: "#feb0c1",
+                      borderRadius: 999,
+                    }}
+                  />
                 </div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* BÖLÜMLER + KİTAPTAN GÖRSELLER */}
-        <div style={{ display: "flex", gap: 14, marginBottom: 20 }}>
-          {/* Bölümler */}
-          <div style={{ flex: 1 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Bölümler</h3>
-              <button style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", fontSize: 11, cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontFamily: "Montserrat" }}>
-                Tümünü Gör <ChevronRight size={12} />
-              </button>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {chapters.map((ch: any, i: number) => (
-                <div
-                  key={i}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 10,
-                    padding: "10px 12px",
-                    background: ch.status === "current" ? "rgba(124,58,237,0.1)" : "rgba(255,255,255,0.02)",
-                    borderRadius: 10,
-                    border: ch.status === "current" ? "1px solid rgba(124,58,237,0.3)" : "1px solid transparent",
-                  }}
-                >
-                  <div style={{ color: "rgba(255,255,255,0.3)", flexShrink: 0 }}>
-                    <List size={13} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: 11, fontWeight: ch.status === "current" ? 700 : 500, color: ch.status === "locked" ? "rgba(255,255,255,0.3)" : "#fff", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                      {i + 1 === 37 ? "37" : i + 1}. {ch.title || `Bölüm ${i + 1}`}
-                    </p>
-                  </div>
-                  <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", flexShrink: 0 }}>{ch.date || "--"}</span>
-                  <div style={{ flexShrink: 0 }}>
-                    {ch.status === "read" && <CheckCircle size={14} color="rgba(255,255,255,0.4)" />}
-                    {ch.status === "current" && (
-                      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        <span style={{ fontSize: 10, color: "#a78bfa", fontWeight: 600 }}>Devam et</span>
-                        <Play size={13} color="#a78bfa" fill="#a78bfa" />
-                      </div>
-                    )}
-                    {ch.status === "locked" && <Lock size={13} color="rgba(255,255,255,0.25)" />}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Kitaptan Görseller */}
-          <div style={{ width: 160, flexShrink: 0 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-              <h3 style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Kitaptan Görseller</h3>
-              <button style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", fontSize: 10, cursor: "pointer", display: "flex", alignItems: "center", fontFamily: "Montserrat" }}>
-                Tümünü Gör <ChevronRight size={11} />
-              </button>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
-              {galleryImages.map((img, i) => (
-                <div key={i} style={{ borderRadius: 8, overflow: "hidden", aspectRatio: "1" }}>
-                  <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* MEDIA & GALLERY */}
+      <div style={{ padding: "26px 16px 0" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", margin: 0 }}>Medya ve Görseller</h3>
+          <ChevronRight size={16} color="#adb5bd" />
         </div>
-
-        {/* YAZAR */}
-        <div
-          style={{
-            background: "#13131f",
-            borderRadius: 14,
-            padding: "14px",
-            border: "1px solid rgba(255,255,255,0.06)",
-            marginBottom: 20,
-          }}
-        >
-          <p style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 10, fontWeight: 500 }}>Yazarı</p>
-          <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-            <img
-              src="https://picsum.photos/seed/author/80/80"
-              style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: "2px solid #7c3aed", flexShrink: 0 }}
-            />
-            <div style={{ flex: 1 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 2 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>L. E. Aydın</span>
-                <div style={{ width: 14, height: 14, borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>✓</span>
-                </div>
-              </div>
-              <p style={{ fontSize: 11, color: "#a78bfa", marginBottom: 6 }}>@leaydin</p>
-              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", lineHeight: 1.5, marginBottom: 10 }}>
-                Hayallerini kelimelere, kelimelerini dünyalara dönüştüren bir hikaye sevdalısı.
-              </p>
-              <button
+        <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
+          {media.map((m, i) => (
+            <div key={i} style={{ flexShrink: 0, width: 130 }}>
+              <div
                 style={{
-                  width: "100%",
-                  padding: "9px 0",
-                  background: "transparent",
-                  border: "1px solid #7c3aed",
-                  borderRadius: 10,
-                  color: "#a78bfa",
-                  fontSize: 12,
-                  fontFamily: "Montserrat",
-                  fontWeight: 700,
-                  cursor: "pointer",
+                  position: "relative",
+                  width: 130,
+                  height: 92,
+                  borderRadius: 12,
+                  overflow: "hidden",
+                  background: "#1a1a2e",
                 }}
               >
-                Takip Et
-              </button>
-              <div style={{ display: "flex", gap: 20, marginTop: 12 }}>
-                {[["12", "Eser"], ["284B", "Takipçi"], ["3.2M", "Okunma"]].map(([val, label]) => (
-                  <div key={label} style={{ textAlign: "center" }}>
-                    <p style={{ fontSize: 13, fontWeight: 700, color: "#fff", margin: 0 }}>{val}</p>
-                    <p style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", margin: "2px 0 0" }}>{label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* OKUYUCU YORUMLARI */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>Okuyucu Yorumları</h3>
-            <button style={{ background: "none", border: "none", color: "rgba(255,255,255,0.5)", fontSize: 11, cursor: "pointer", display: "flex", alignItems: "center", gap: 2, fontFamily: "Montserrat" }}>
-              Tümünü Gör <ChevronRight size={12} />
-            </button>
-          </div>
-          <div style={{ display: "flex", gap: 14 }}>
-            {/* Rating */}
-            <div
-              style={{
-                flexShrink: 0,
-                background: "#13131f",
-                borderRadius: 14,
-                padding: "14px",
-                border: "1px solid rgba(255,255,255,0.06)",
-                width: 120,
-              }}
-            >
-              <p style={{ fontSize: 36, fontWeight: 800, color: "#fff", margin: 0 }}>4.8</p>
-              <div style={{ display: "flex", gap: 2, margin: "4px 0 8px" }}>
-                {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} size={12} fill="#f59e0b" color="#f59e0b" />
-                ))}
-              </div>
-              <p style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>12.6B değerlendirme</p>
-              <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 3 }}>
-                {[[5, 78], [4, 15], [3, 5], [2, 1], [1, 1]].map(([star, pct]) => (
-                  <div key={star} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                    <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", width: 8 }}>{star}</span>
-                    <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,0.1)", borderRadius: 999, overflow: "hidden" }}>
-                      <div style={{ height: "100%", width: `${pct}%`, background: "#7c3aed", borderRadius: 999 }} />
+                <img
+                  src={m.img}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", opacity: 0.85 }}
+                />
+                {m.type === "video" && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 36,
+                        height: 36,
+                        borderRadius: "50%",
+                        background: "rgba(255,255,255,0.9)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Play size={14} color="#1a1a2e" fill="#1a1a2e" />
                     </div>
-                    <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", width: 24 }}>%{pct}</span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Comment */}
-            <div
-              style={{
-                flex: 1,
-                background: "#13131f",
-                borderRadius: 14,
-                padding: "14px",
-                border: "1px solid rgba(255,255,255,0.06)",
-              }}
-            >
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
-                <img src="https://picsum.photos/seed/reviewer/40/40" style={{ width: 32, height: 32, borderRadius: "50%", objectFit: "cover" }} />
-                <div>
-                  <p style={{ fontSize: 12, fontWeight: 700, color: "#fff", margin: 0 }}>Melisa A.</p>
-                  <div style={{ display: "flex", gap: 2, marginTop: 2 }}>
-                    {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={10} fill="#f59e0b" color="#f59e0b" />)}
-                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginLeft: 4 }}>2 gün önce</span>
-                  </div>
+                )}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    padding: "16px 8px 6px",
+                    background: "linear-gradient(to top, rgba(0,0,0,0.7), transparent)",
+                  }}
+                >
+                  <p style={{ fontSize: 10.5, fontWeight: 700, color: "#fff", margin: 0 }}>{m.label}</p>
+                  <p style={{ fontSize: 9, color: "rgba(255,255,255,0.8)", margin: "1px 0 0" }}>{m.sub}</p>
                 </div>
               </div>
-              <p style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>
-                Uzun zamandır böyle sürükleyici bir hikaye okumamıştım. Karakterler, dünya, olay örgüsü... Her şey mükemmel!
-              </p>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
       <BottomNav />
-    </div>
-  );
-}
-
-function StatItem({ icon, value, sub }: { icon: React.ReactNode; value: string; sub: string }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 3 }}>
-        {icon}
-        <span style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>{value}</span>
-      </div>
-      <span style={{ fontSize: 9, color: "rgba(255,255,255,0.45)" }}>{sub}</span>
     </div>
   );
 }
