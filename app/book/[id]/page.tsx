@@ -26,6 +26,10 @@ export default function BookDetailPage() {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
+  const [activeBoard, setActiveBoard] = useState<any>(null);
+  const [creatingBoard, setCreatingBoard] = useState(false);
+  const [newBoardName, setNewBoardName] = useState("");
+  const [boards, setBoards] = useState<any[]>([]);
 
   useEffect(() => {
     const found = MOCK_BOOKS.find((b) => b.id === id);
@@ -279,36 +283,76 @@ export default function BookDetailPage() {
       </div>
 
       {/* KİTAP PANOSU */}
-<div style={{ padding: "26px 16px 0" }}>
-  <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", marginBottom: 12 }}>Kitap Panosu</h3>
-  <button
-    onClick={() => setGalleryOpen(true)}
-    style={{
-      position: "relative",
-      width: "100%",
-      height: 110,
-      borderRadius: 16,
-      overflow: "hidden",
-      border: "none",
-      cursor: "pointer",
-      padding: 0,
-      display: "flex",
-    }}
-  >
-    {boardImages.map((img, i) => (
-      <div key={i} style={{ flex: 1, position: "relative", overflow: "hidden" }}>
-        <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+      <div style={{ padding: "26px 16px 0" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <h3 style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", margin: 0 }}>Kitap Panosu</h3>
+          <button
+            onClick={() => setCreatingBoard(true)}
+            style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}
+          >
+            <Plus size={14} color="#1a1a2e" />
+            <span style={{ fontSize: 12, fontWeight: 700, color: "#1a1a2e" }}>Yeni Pano</span>
+          </button>
+        </div>
+
+        <button
+          onClick={() => setGalleryOpen(true)}
+          style={{
+            position: "relative",
+            width: "100%",
+            height: 110,
+            borderRadius: 16,
+            overflow: "hidden",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            display: "flex",
+          }}
+        >
+          {boardImages.map((img, i) => (
+            <div key={i} style={{ flex: 1, position: "relative", overflow: "hidden" }}>
+              <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            </div>
+          ))}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(0,0,0,0.15)",
+            }}
+          />
+        </button>
+
+        {/* Kullanıcı tarafından oluşturulan panolar */}
+        {boards.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 14 }}>
+            {boards.map((b) => (
+              <button
+                key={b.id}
+                onClick={() => setActiveBoard(b)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  background: "#fafafa",
+                  border: "1px solid #f1f3f5",
+                  borderRadius: 14,
+                  padding: 10,
+                  cursor: "pointer",
+                  textAlign: "left",
+                }}
+              >
+                <div style={{ display: "flex", borderRadius: 10, overflow: "hidden", width: 60, height: 44, flexShrink: 0 }}>
+                  {b.images.slice(0, 2).map((img: string, i: number) => (
+                    <img key={i} src={img} style={{ width: "50%", height: "100%", objectFit: "cover" }} />
+                  ))}
+                </div>
+                <span style={{ fontSize: 13, fontWeight: 700, color: "#1a1a2e" }}>{b.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-    ))}
-    <div
-      style={{
-        position: "absolute",
-        inset: 0,
-        background: "rgba(0,0,0,0.15)",
-      }}
-    />
-  </button>
-</div>
 
       {/* GALLERY OVERLAY */}
       {galleryOpen && (
@@ -349,109 +393,110 @@ export default function BookDetailPage() {
           </div>
         </div>
       )}
-{/* PANO DETAY OVERLAY */}
-{activeBoard && (
-  <div
-    style={{
-      position: "fixed",
-      inset: 0,
-      background: "#fff",
-      zIndex: 100,
-      overflowY: "auto",
-    }}
-  >
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 16px" }}>
-      <button onClick={() => setActiveBoard(null)} style={{ background: "none", border: "none", cursor: "pointer" }}>
-        <ChevronLeft size={24} color="#1a1a2e" />
-      </button>
-      <p style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", margin: 0 }}>{activeBoard.name}</p>
-      <div style={{ width: 24 }} />
-    </div>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, padding: "0 16px 30px" }}>
-      {activeBoard.images.map((img: string, i: number) => (
-        <div key={i} style={{ borderRadius: 12, overflow: "hidden", aspectRatio: i === 0 ? "1/1.2" : "1/1" }}>
-          <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-        </div>
-      ))}
-    </div>
-  </div>
-)}
 
-{/* YENİ PANO OLUŞTURMA OVERLAY */}
-{creatingBoard && (
-  <div
-    style={{
-      position: "fixed",
-      inset: 0,
-      background: "rgba(0,0,0,0.4)",
-      zIndex: 100,
-      display: "flex",
-      alignItems: "flex-end",
-    }}
-    onClick={() => setCreatingBoard(false)}
-  >
-    <div
-      onClick={(e) => e.stopPropagation()}
-      style={{
-        width: "100%",
-        background: "#fff",
-        borderRadius: "24px 24px 0 0",
-        padding: "20px 16px 32px",
-      }}
-    >
-      <div style={{ width: 36, height: 4, background: "#dee2e6", borderRadius: 999, margin: "0 auto 18px" }} />
-      <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a2e", marginBottom: 14 }}>Yeni Pano Oluştur</h3>
-      <input
-        value={newBoardName}
-        onChange={(e) => setNewBoardName(e.target.value)}
-        placeholder="Pano adı (örn: Atmosfer, Karakterler...)"
-        style={{
-          width: "100%",
-          padding: "13px 16px",
-          borderRadius: 14,
-          border: "1px solid #e9ecef",
-          fontSize: 13,
-          fontFamily: "Montserrat",
-          outline: "none",
-          marginBottom: 14,
-          boxSizing: "border-box",
-        }}
-      />
-      <button
-        onClick={() => {
-          if (!newBoardName.trim()) return;
-          setBoards([
-            ...boards,
-            {
-              id: Date.now().toString(),
-              name: newBoardName.trim(),
-              images: [
-                "https://picsum.photos/seed/new1/400/500",
-                "https://picsum.photos/seed/new2/300/300",
-                "https://picsum.photos/seed/new3/300/300",
-              ],
-            },
-          ]);
-          setNewBoardName("");
-          setCreatingBoard(false);
-        }}
-        style={{
-          width: "100%",
-          padding: "14px 0",
-          background: "#feb0c1",
-          border: "none",
-          borderRadius: 14,
-          color: "#1a1a2e",
-          fontSize: 14,
-          fontWeight: 700,
-          cursor: "pointer",
-        }}
-      >
-        Panoyu Oluştur
-      </button>
-    </div>
-  </div>
-)}
+      {/* PANO DETAY OVERLAY */}
+      {activeBoard && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "#fff",
+            zIndex: 100,
+            overflowY: "auto",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 16px" }}>
+            <button onClick={() => setActiveBoard(null)} style={{ background: "none", border: "none", cursor: "pointer" }}>
+              <ChevronLeft size={24} color="#1a1a2e" />
+            </button>
+            <p style={{ fontSize: 15, fontWeight: 800, color: "#1a1a2e", margin: 0 }}>{activeBoard.name}</p>
+            <div style={{ width: 24 }} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, padding: "0 16px 30px" }}>
+            {activeBoard.images.map((img: string, i: number) => (
+              <div key={i} style={{ borderRadius: 12, overflow: "hidden", aspectRatio: i === 0 ? "1/1.2" : "1/1" }}>
+                <img src={img} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* YENİ PANO OLUŞTURMA OVERLAY */}
+      {creatingBoard && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.4)",
+            zIndex: 100,
+            display: "flex",
+            alignItems: "flex-end",
+          }}
+          onClick={() => setCreatingBoard(false)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: "100%",
+              background: "#fff",
+              borderRadius: "24px 24px 0 0",
+              padding: "20px 16px 32px",
+            }}
+          >
+            <div style={{ width: 36, height: 4, background: "#dee2e6", borderRadius: 999, margin: "0 auto 18px" }} />
+            <h3 style={{ fontSize: 16, fontWeight: 800, color: "#1a1a2e", marginBottom: 14 }}>Yeni Pano Oluştur</h3>
+            <input
+              value={newBoardName}
+              onChange={(e) => setNewBoardName(e.target.value)}
+              placeholder="Pano adı (örn: Atmosfer, Karakterler...)"
+              style={{
+                width: "100%",
+                padding: "13px 16px",
+                borderRadius: 14,
+                border: "1px solid #e9ecef",
+                fontSize: 13,
+                fontFamily: "Montserrat",
+                outline: "none",
+                marginBottom: 14,
+                boxSizing: "border-box",
+              }}
+            />
+            <button
+              onClick={() => {
+                if (!newBoardName.trim()) return;
+                setBoards([
+                  ...boards,
+                  {
+                    id: Date.now().toString(),
+                    name: newBoardName.trim(),
+                    images: [
+                      "https://picsum.photos/seed/new1/400/500",
+                      "https://picsum.photos/seed/new2/300/300",
+                      "https://picsum.photos/seed/new3/300/300",
+                    ],
+                  },
+                ]);
+                setNewBoardName("");
+                setCreatingBoard(false);
+              }}
+              style={{
+                width: "100%",
+                padding: "14px 0",
+                background: "#feb0c1",
+                border: "none",
+                borderRadius: 14,
+                color: "#1a1a2e",
+                fontSize: 14,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              Panoyu Oluştur
+            </button>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>
